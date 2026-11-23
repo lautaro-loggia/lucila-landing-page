@@ -9,7 +9,13 @@ const wa = whatsappLink;
 export const site = {
   name: "Lucila Carro",
   brand: "Wonder Program",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  // Dominio público: el que se configure a mano o, en Vercel, el de producción del proyecto.
+  // Se usa para los links absolutos de la imagen OG al compartir la web.
+  url:
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : "http://localhost:3000"),
   whatsappDisplay: "+598 99 553 066",
   links: {
     start: wa("¡Hola Lucila! Quiero empezar a entrenar con Wonder Program."),
