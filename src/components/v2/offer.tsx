@@ -1,14 +1,153 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import { ContactButton } from "./contact-form";
 import { Arrow, Reveal, SectionHead } from "./ui";
 
 const includes = ["Técnica de levantamientos", "Gimnásticos", "Certificado para cada alumno"];
 const cities = ["Argentina", "Uruguay"];
 const steps = ["Me escribís por WhatsApp", "Coordinamos fecha y formato", "Voy a tu box"];
+
+const workshopPhotos = [
+  "/images/taller-2.jpg",
+  "/images/taller-3.jpg",
+  "/images/taller-4.jpg",
+  "/images/taller-5.jpg",
+  "/images/taller-1.jpg",
+];
+
+/**
+ * Carrusel de fotos de talleres: se desliza con el dedo o con las flechas y
+ * avanza solo cada unos segundos mientras está en pantalla (se frena al
+ * tocarlo o pasar el mouse).
+ */
+function WorkshopCarousel() {
+  const track = useRef<HTMLDivElement>(null);
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const reduce = useReducedMotion();
+  const inView = useInView(track, { amount: 0.5 });
+
+  const goTo = (n: number) => {
+    const el = track.current;
+    const count = workshopPhotos.length;
+    const i = ((n % count) + count) % count;
+    const item = el?.children[i] as HTMLElement | undefined;
+    if (!el || !item) return;
+    // Centra la foto elegida (en desktop las primeras/últimas quedan contra el borde)
+    const left = Math.min(
+      el.scrollWidth - el.clientWidth,
+      Math.max(0, item.offsetLeft - (el.clientWidth - item.offsetWidth) / 2),
+    );
+    el.scrollTo({ left, behavior: reduce ? "auto" : "smooth" });
+  };
+
+  const onScroll = () => {
+    const el = track.current;
+    if (!el) return;
+    const center = el.scrollLeft + el.clientWidth / 2;
+    let best = 0;
+    let dist = Infinity;
+    Array.from(el.children).forEach((c, i) => {
+      const item = c as HTMLElement;
+      const d = Math.abs(item.offsetLeft + item.offsetWidth / 2 - center);
+      if (d < dist) {
+        dist = d;
+        best = i;
+      }
+    });
+    setCurrent(best);
+  };
+
+  useEffect(() => {
+    if (!inView || paused || reduce) return;
+    const id = setTimeout(() => goTo(current + 1), 4000);
+    return () => clearTimeout(id);
+    // goTo solo depende de refs
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current, inView, paused, reduce]);
+
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={() => setPaused(true)}
+    >
+      <div
+        ref={track}
+        onScroll={onScroll}
+        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth [scrollbar-width:none] max-sm:-mx-5 max-sm:px-[8vw]"
+      >
+        {workshopPhotos.map((src, n) => (
+          <div
+            key={src}
+            className={`relative aspect-[4/3] w-[84vw] shrink-0 snap-center overflow-hidden rounded-[20px] transition-[opacity,transform] duration-500 sm:w-[calc(50%-6px)] md:w-[calc(33.333%-8px)] ${
+              n === current ? "opacity-100" : "max-sm:scale-[0.96] max-sm:opacity-60"
+            }`}
+          >
+            <Image
+              src={src}
+              alt="Grupo de alumnos con sus certificados al cierre de un taller"
+              fill
+              quality={78}
+              sizes="(min-width: 768px) 330px, (min-width: 640px) 50vw, 84vw"
+              className="object-cover"
+            />
+          </div>
+        ))}
+      </div>
+
+      {/* Controles: puntitos + flechas */}
+      <div className="mt-5 flex items-center justify-center gap-4 sm:justify-between">
+        <button
+          type="button"
+          aria-label="Foto anterior"
+          onClick={() => {
+            setPaused(true);
+            goTo(current - 1);
+          }}
+          className="hidden size-11 place-items-center rounded-full border border-ink/20 transition-colors hover:bg-blush sm:grid"
+        >
+          <CaretLeft size={18} weight="bold" />
+        </button>
+        <div className="flex items-center gap-2">
+          {workshopPhotos.map((src, n) => (
+            <button
+              key={src}
+              type="button"
+              aria-label={`Ver foto ${n + 1} de ${workshopPhotos.length}`}
+              aria-current={n === current}
+              onClick={() => {
+                setPaused(true);
+                goTo(n);
+              }}
+              className="grid h-6 place-items-center"
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all duration-300 ${n === current ? "w-6 bg-clay" : "w-1.5 bg-ink/25"}`}
+              />
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          aria-label="Foto siguiente"
+          onClick={() => {
+            setPaused(true);
+            goTo(current + 1);
+          }}
+          className="hidden size-11 place-items-center rounded-full bg-clay text-sand transition-colors hover:bg-cream sm:grid"
+        >
+          <CaretRight size={18} weight="bold" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 /** Entrada tipo "ticket" para pedir un taller en tu box. */
 export function Offer() {
@@ -94,12 +233,8 @@ export function Offer() {
         </div>
       </motion.div>
 
-      <Reveal className="mx-auto mt-6 flex max-w-[980px] gap-3 overflow-x-auto pb-2 [scrollbar-width:none]">
-        {["/images/taller-2.jpg", "/images/taller-3.jpg", "/images/taller-4.jpg", "/images/taller-5.jpg"].map((src) => (
-          <div key={src} className="relative aspect-[4/3] w-[60vw] shrink-0 overflow-hidden rounded-[20px] sm:w-[calc(25%-9px)]">
-            <Image src={src} alt="Grupo de alumnos con sus certificados al cierre de un taller" fill quality={78} sizes="(min-width: 640px) 25vw, 60vw" className="object-cover" />
-          </div>
-        ))}
+      <Reveal className="mx-auto mt-8 max-w-[980px]">
+        <WorkshopCarousel />
       </Reveal>
     </section>
   );

@@ -132,7 +132,7 @@ function Chapter({
         initial={reduce ? false : { opacity: 0, y: 24 }}
         animate={state === "show" ? { opacity: 1, y: 0 } : undefined}
         transition={{ duration: 0.9, delay: 0.3, ease }}
-        className="relative mt-5 aspect-[16/10] overflow-hidden rounded-[18px] bg-blush md:hidden"
+        className="relative mt-5 aspect-[4/5] overflow-hidden rounded-[20px] bg-blush md:hidden"
       >
         <motion.div
           className="absolute inset-0"
