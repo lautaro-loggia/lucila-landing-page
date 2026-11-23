@@ -2,7 +2,16 @@
 
 import Image from "next/image";
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
+import {
+  motion,
+  useInView,
+  useMotionTemplate,
+  useMotionValue,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { ContactButton } from "./contact-form";
 import { Arrow, Reveal, SectionHead } from "./ui";
@@ -157,6 +166,30 @@ export function Offer() {
   const imgY = useTransform(scrollYProgress, [0, 1], ["-8%", "8%"]);
   const tilt = useTransform(scrollYProgress, [0, 0.45], [-3, 0]);
 
+  // Inclinación 3D que sigue al mouse (solo con mouse, no en pantallas táctiles)
+  const px = useMotionValue(0.5);
+  const py = useMotionValue(0.5);
+  const spring = { stiffness: 160, damping: 18, mass: 0.6 };
+  const rotateY = useSpring(useTransform(px, [0, 1], [-9, 9]), spring);
+  const rotateX = useSpring(useTransform(py, [0, 1], [7, -7]), spring);
+  const glareX = useTransform(px, [0, 1], ["0%", "100%"]);
+  const glareY = useTransform(py, [0, 1], ["0%", "100%"]);
+  const glare = useMotionTemplate`radial-gradient(520px circle at ${glareX} ${glareY}, rgba(255,255,255,0.14), transparent 60%)`;
+  const glareOpacity = useSpring(0, { stiffness: 200, damping: 30 });
+
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (reduce || e.pointerType !== "mouse") return;
+    const r = e.currentTarget.getBoundingClientRect();
+    px.set((e.clientX - r.left) / r.width);
+    py.set((e.clientY - r.top) / r.height);
+    glareOpacity.set(1);
+  };
+  const onLeave = () => {
+    px.set(0.5);
+    py.set(0.5);
+    glareOpacity.set(0);
+  };
+
   return (
     <section id="talleres" aria-label="Talleres" className="mx-auto max-w-[1180px] px-5 pb-32 sm:pb-40">
       <SectionHead
@@ -170,11 +203,20 @@ export function Offer() {
         aside="Ya dicté talleres en boxes de Argentina y Uruguay. Si tenés un box, armamos uno para tu comunidad."
       />
 
+      <div className="mx-auto mt-12 max-w-[980px] [perspective:1200px]">
       <motion.div
         ref={ref}
-        style={reduce ? undefined : { rotate: tilt }}
-        className="mx-auto mt-12 grid max-w-[980px] overflow-hidden rounded-[24px] shadow-[0_40px_80px_-40px_rgba(5,3,20,0.5)] md:grid-cols-[1.5fr_1fr]"
+        onPointerMove={onMove}
+        onPointerLeave={onLeave}
+        style={reduce ? undefined : { rotate: tilt, rotateX, rotateY, transformStyle: "preserve-3d" }}
+        className="relative grid overflow-hidden rounded-[24px] shadow-[0_40px_80px_-40px_rgba(5,3,20,0.5)] md:grid-cols-[1.5fr_1fr]"
       >
+        {/* Brillo que sigue al mouse */}
+        <motion.div
+          aria-hidden
+          style={{ background: glare, opacity: glareOpacity }}
+          className="pointer-events-none absolute inset-0 z-20 hidden md:block"
+        />
         {/* Cuerpo del ticket */}
         <div className="relative isolate min-h-[340px] overflow-hidden p-6 text-white sm:p-8">
           <motion.div style={reduce ? undefined : { y: imgY }} className="absolute -inset-y-[10%] inset-x-0 -z-10">
@@ -232,6 +274,7 @@ export function Offer() {
           </ContactButton>
         </div>
       </motion.div>
+      </div>
 
       <Reveal className="mx-auto mt-8 max-w-[980px]">
         <WorkshopCarousel />
