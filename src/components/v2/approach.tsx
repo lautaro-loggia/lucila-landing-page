@@ -45,7 +45,7 @@ function PhotoCard({
         src={src}
         alt=""
         fill
-        quality={80}
+        quality={85}
         sizes="(min-width: 768px) 33vw, 100vw"
         className={`object-cover transition-transform duration-[1.2s] group-hover:scale-105 ${pos}`}
       />
@@ -96,7 +96,7 @@ export function Approach() {
             <span className="ital">primero</span>
           </h3>
           <div className="relative mt-auto h-[270px]">
-            <Image src="/images/sobre-mi.jpg" alt="Lucila apoyada sobre una barra con discos" fill quality={80} sizes="(min-width: 768px) 33vw, 100vw" className="object-cover object-[50%_25%]" />
+            <Image src="/images/sobre-mi.jpg" alt="Lucila apoyada sobre una barra con discos" fill quality={85} sizes="(min-width: 768px) 33vw, 100vw" className="object-cover object-[50%_25%]" />
           </div>
         </Card>
 
@@ -113,7 +113,7 @@ export function Approach() {
                     style={{ left: `${50 + Math.cos(a) * 42}%`, top: `${50 + Math.sin(a) * 42}%` }}
                   >
                     <span className="orbit-counter relative block size-12 overflow-hidden rounded-full shadow-md ring-4 ring-shell">
-                      <Image src={src} alt="" fill sizes="48px" quality={70} className="object-cover object-top" />
+                      <Image src={src} alt="" fill sizes="48px" quality={78} className="object-cover object-top" />
                     </span>
                   </span>
                 );

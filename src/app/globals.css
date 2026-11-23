@@ -124,8 +124,9 @@ body {
   }
 }
 @keyframes hero-img {
+  /* No arranca invisible: así la foto cuenta como contenido pintado desde el primer cuadro (mejor LCP) */
   from {
-    opacity: 0;
+    opacity: 0.35;
     transform: scale(1.08);
   }
   to {
@@ -151,4 +152,36 @@ body {
   .hero-img {
     animation: none;
   }
+}
+
+/* Formulario de contacto: hoja que sube desde abajo (mobile) o aparece centrada (desktop) */
+.contact-form[open] {
+  animation: contact-form-in 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.contact-form[open]::backdrop {
+  animation: contact-form-fade 0.3s ease-out;
+}
+.contact-form.closing {
+  animation: contact-form-out 0.28s cubic-bezier(0.7, 0, 0.84, 0) forwards;
+}
+.contact-form.closing::backdrop {
+  animation: contact-form-fade-out 0.28s ease-in forwards;
+}
+@keyframes contact-form-in {
+  from { opacity: 0; transform: translateY(32px); }
+}
+@keyframes contact-form-out {
+  to { opacity: 0; transform: translateY(48px); }
+}
+@keyframes contact-form-fade {
+  from { opacity: 0; }
+}
+@keyframes contact-form-fade-out {
+  to { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .contact-form[open],
+  .contact-form[open]::backdrop,
+  .contact-form.closing,
+  .contact-form.closing::backdrop { animation: none; }
 }

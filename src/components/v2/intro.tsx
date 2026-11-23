@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from "motion/react";
-import { useRef, useSyncExternalStore } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import { Reveal } from "./ui";
 
 const avatars = ["/images/podio.jpg", "/images/medalla.jpg", "/images/strong.jpg"];
@@ -15,7 +15,7 @@ export function Rating() {
         <div className="flex justify-center -space-x-3">
           {avatars.map((src) => (
             <span key={src} className="relative size-12 overflow-hidden rounded-full ring-4 ring-sand">
-              <Image src={src} alt="" fill sizes="48px" quality={70} className="object-cover object-top" />
+              <Image src={src} alt="" fill sizes="48px" quality={78} className="object-cover object-top" />
             </span>
           ))}
         </div>
@@ -83,7 +83,7 @@ export function Philosophy() {
               <Word key={i} word={w} progress={progress} range={range(i)} />
             ))}
       </p>
-      <Reveal delay={0.1}>
+      <Reveal blur delay={0.1}>
         <p className="mt-8 text-sm text-taupe">— Wonder Program</p>
       </Reveal>
     </section>
@@ -112,18 +112,20 @@ function useIsDesktop() {
 
 function Polaroid({ p, i, canDrag }: { p: (typeof polaroids)[number]; i: number; canDrag: boolean }) {
   const reduce = useReducedMotion();
+  // En celular, menos giro y menos desnivel: se leen mejor de a una
+  const k = canDrag ? 1 : 0.4;
   return (
     <motion.figure
       drag={!reduce && canDrag}
       dragSnapToOrigin
       dragElastic={0.6}
       whileDrag={{ scale: 1.06, rotate: 0, zIndex: 20, cursor: "grabbing" }}
-      whileHover={{ rotate: 0, y: p.y - 10, scale: 1.03 }}
-      initial={reduce ? false : { opacity: 0, y: p.y + 60, rotate: p.rot * 2.5 }}
-      whileInView={{ opacity: 1, y: p.y, rotate: p.rot }}
-      viewport={{ once: true, amount: 0.3 }}
+      whileHover={canDrag ? { rotate: 0, y: p.y - 10, scale: 1.03 } : undefined}
+      initial={reduce ? false : { opacity: 0, y: p.y * k + 60, rotate: p.rot * k * 2.5 }}
+      whileInView={{ opacity: 1, y: p.y * k, rotate: p.rot * k }}
+      viewport={{ once: true, amount: canDrag ? 0.3 : 0.01 }}
       transition={{ type: "spring", stiffness: 140, damping: 18, delay: (i % 4) * 0.08 }}
-      className="relative w-[min(46vw,210px)] shrink-0 snap-center bg-[#efebfb] p-2.5 pb-3 md:cursor-grab md:touch-pan-y text-sand shadow-[0_24px_40px_-18px_rgba(5,3,20,0.35)] select-none"
+      className="relative w-[64vw] max-w-[260px] shrink-0 snap-center md:w-[210px] bg-[#efebfb] p-2.5 pb-3 md:cursor-grab md:touch-pan-y text-sand shadow-[0_24px_40px_-18px_rgba(5,3,20,0.35)] select-none"
     >
       {/* cinta */}
       <span
@@ -137,7 +139,7 @@ function Polaroid({ p, i, canDrag }: { p: (typeof polaroids)[number]; i: number;
           fill
           draggable={false}
           sizes="210px"
-          quality={70}
+          quality={85}
           className={`pointer-events-none object-cover ${p.pos}`}
         />
       </div>
@@ -152,22 +154,59 @@ function Polaroid({ p, i, canDrag }: { p: (typeof polaroids)[number]; i: number;
 /** Tira corta de polaroids con cinta, que se pueden arrastrar (cierra "Mi historia"). */
 export function Gallery() {
   const desktop = useIsDesktop();
+  const strip = useRef<HTMLDivElement>(null);
+  const [current, setCurrent] = useState(0);
+
+  // En celular: qué foto está centrada, para los puntitos de abajo
+  const onScroll = () => {
+    const el = strip.current;
+    if (!el || desktop) return;
+    const first = el.firstElementChild as HTMLElement | null;
+    const step = first ? first.offsetWidth + 16 : el.clientWidth;
+    setCurrent(Math.min(polaroids.length - 1, Math.max(0, Math.round(el.scrollLeft / step))));
+  };
+  const goTo = (n: number) => {
+    const el = strip.current;
+    const item = el?.children[n] as HTMLElement | undefined;
+    if (!el || !item) return;
+    el.scrollTo({ left: item.offsetLeft - (el.clientWidth - item.offsetWidth) / 2, behavior: "smooth" });
+  };
+
   return (
     <section aria-label="Galería" className="overflow-x-clip px-5 pb-32 sm:pb-40">
-      <Reveal className="mx-auto max-w-xl text-center">
+      <Reveal blur className="mx-auto max-w-xl text-center">
         <h2 className="display text-[clamp(2rem,3.6vw,2.8rem)]">
           Del box <span className="ital">al podio.</span>
         </h2>
       </Reveal>
-      <div className="mx-auto mt-10 flex max-w-[1180px] snap-x snap-mandatory gap-4 overflow-x-auto px-[27vw] pt-4 pb-8 [scrollbar-width:none] max-md:-mx-5 md:mt-12 md:justify-center md:gap-0 md:overflow-visible md:px-0 md:pb-0 md:[&>*+*]:-ml-5">
+      <div
+        ref={strip}
+        onScroll={onScroll}
+        className="mx-auto mt-6 flex max-w-[1180px] snap-x snap-mandatory items-center gap-4 overflow-x-auto px-[18vw] pt-6 pb-6 [scrollbar-width:none] max-md:-mx-5 md:mt-12 md:justify-center md:gap-0 md:overflow-visible md:px-0 md:pt-4 md:pb-0 md:[&>*+*]:-ml-5"
+      >
         {polaroids.map((p, i) => (
           <Polaroid key={p.src} p={p} i={i} canDrag={desktop} />
         ))}
       </div>
-      <p className="mt-2 text-center text-xs text-taupe md:mt-8">
-        <span className="md:hidden">Deslizá las fotos ↔</span>
-        <span className="hidden md:inline">Arrastrá las fotos ↔</span>
-      </p>
+
+      {/* Celular: puntitos que muestran cuántas fotos hay y en cuál estás */}
+      <div className="mt-2 flex items-center justify-center gap-2 md:hidden">
+        {polaroids.map((p, n) => (
+          <button
+            key={p.src}
+            type="button"
+            aria-label={`Ver foto ${n + 1} de ${polaroids.length}`}
+            aria-current={n === current}
+            onClick={() => goTo(n)}
+            className="grid h-6 place-items-center"
+          >
+            <span
+              className={`block h-1.5 rounded-full transition-all duration-300 ${n === current ? "w-6 bg-clay" : "w-1.5 bg-ink/25"}`}
+            />
+          </button>
+        ))}
+      </div>
+      <p className="mt-8 hidden text-center text-xs text-taupe md:block">Arrastrá las fotos ↔</p>
     </section>
   );
 }

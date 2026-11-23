@@ -71,7 +71,7 @@ export function Testimonials() {
               >
                 {/* La foto ocupa toda la tarjeta; el nombre va encima, sobre un degradé. */}
                 <div className="relative h-full overflow-hidden rounded-[22px] bg-blush">
-                  <Image src={photo} alt="" fill sizes="(min-width: 768px) 520px, 90vw" quality={80} draggable={false} className="pointer-events-none object-cover" />
+                  <Image src={photo} alt="" fill sizes="(min-width: 768px) 520px, 90vw" quality={85} draggable={false} className="pointer-events-none object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#110c26]/90 via-[#110c26]/10 to-transparent" />
                   <span className="absolute top-4 left-4 rounded-full bg-[#efebfb]/90 px-3 py-1 text-xs text-sand">{item.detail}</span>
                   <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5 text-white">

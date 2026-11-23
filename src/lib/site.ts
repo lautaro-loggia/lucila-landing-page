@@ -1,8 +1,10 @@
 // Datos de contacto y redes en un solo lugar para editarlos fácil.
 const WHATSAPP_NUMBER = "59899553066";
 
-const wa = (text: string) =>
+/** Link a WhatsApp con el mensaje ya escrito. */
+export const whatsappLink = (text: string) =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+const wa = whatsappLink;
 
 export const site = {
   name: "Lucila Carro",

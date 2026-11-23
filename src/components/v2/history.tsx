@@ -140,7 +140,7 @@ function Chapter({
           animate={state === "show" ? { scale: 1 } : undefined}
           transition={{ duration: 1.4, delay: 0.3, ease }}
         >
-          <Image src={c.src} alt={c.alt} fill quality={70} sizes="90vw" className={`object-cover ${c.pos}`} />
+          <Image src={c.src} alt={c.alt} fill quality={85} sizes="90vw" className={`object-cover ${c.pos}`} />
         </motion.div>
       </motion.div>
     </li>
@@ -157,7 +157,7 @@ export function History() {
   const c = chapters[active];
 
   return (
-    <section id="sobre-mi" aria-label="Mi historia" className="mx-auto max-w-[1180px] px-5 pb-32 sm:pb-40">
+    <section id="sobre-mi" aria-label="Mi historia" className="mx-auto max-w-[1180px] px-5 pb-20 sm:pb-40">
       <SectionHead
         chip="Mi historia"
         title={
@@ -182,7 +182,7 @@ export function History() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.8, ease }}
                 >
-                  <Image src={c.src} alt={c.alt} fill quality={80} sizes="45vw" className={`object-cover ${c.pos}`} />
+                  <Image src={c.src} alt={c.alt} fill quality={85} sizes="45vw" className={`object-cover ${c.pos}`} />
                 </motion.div>
               </AnimatePresence>
               <div className="absolute inset-0 bg-gradient-to-t from-[#110c26]/80 via-transparent to-transparent" />

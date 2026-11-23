@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import { site } from "@/lib/site";
+import { ContactButton } from "./contact-form";
 import { Arrow, Reveal, SectionHead } from "./ui";
 
 const includes = ["Técnica de levantamientos", "Gimnásticos", "Certificado para cada alumno"];
@@ -39,7 +39,7 @@ export function Offer() {
         {/* Cuerpo del ticket */}
         <div className="relative isolate min-h-[340px] overflow-hidden p-6 text-white sm:p-8">
           <motion.div style={reduce ? undefined : { y: imgY }} className="absolute -inset-y-[10%] inset-x-0 -z-10">
-            <Image src="/images/taller-1.jpg" alt="" fill quality={80} sizes="(min-width: 768px) 60vw, 100vw" className="object-cover" />
+            <Image src="/images/taller-1.jpg" alt="" fill quality={85} sizes="(min-width: 768px) 60vw, 100vw" className="object-cover" />
           </motion.div>
           <div className="absolute inset-0 -z-10 bg-[#110c26]/70" />
           <span className="rounded-full bg-white/15 px-3 py-1 text-xs backdrop-blur">
@@ -85,21 +85,19 @@ export function Offer() {
           </ol>
           <div aria-hidden className="hidden min-h-6 flex-1 md:block" />
 
-          <a
-            href={site.links.workshop}
-            target="_blank"
-            rel="noopener noreferrer"
+          <ContactButton
+            program="Taller para mi box"
             className="group mt-6 flex items-center justify-between rounded-full bg-clay px-5 py-3 text-sm font-medium text-sand md:mt-auto"
           >
             Pedí un taller <Arrow />
-          </a>
+          </ContactButton>
         </div>
       </motion.div>
 
       <Reveal className="mx-auto mt-6 flex max-w-[980px] gap-3 overflow-x-auto pb-2 [scrollbar-width:none]">
         {["/images/taller-2.jpg", "/images/taller-3.jpg", "/images/taller-4.jpg", "/images/taller-5.jpg"].map((src) => (
           <div key={src} className="relative aspect-[4/3] w-[60vw] shrink-0 overflow-hidden rounded-[20px] sm:w-[calc(25%-9px)]">
-            <Image src={src} alt="Grupo de alumnos con sus certificados al cierre de un taller" fill quality={70} sizes="(min-width: 640px) 25vw, 60vw" className="object-cover" />
+            <Image src={src} alt="Grupo de alumnos con sus certificados al cierre de un taller" fill quality={78} sizes="(min-width: 640px) 25vw, 60vw" className="object-cover" />
           </div>
         ))}
       </Reveal>

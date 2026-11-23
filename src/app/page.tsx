@@ -1,5 +1,6 @@
 import { Approach } from "@/components/v2/approach";
 import { Benefits, Programs } from "@/components/v2/benefits";
+import { ContactFormProvider } from "@/components/v2/contact-form";
 import { Footer } from "@/components/v2/footer";
 import { Hero } from "@/components/v2/hero";
 import { History } from "@/components/v2/history";
@@ -10,7 +11,7 @@ import { Testimonials } from "@/components/v2/testimonials";
 
 export default function Home() {
   return (
-    <>
+    <ContactFormProvider>
       <Nav />
       <main>
         <Hero />
@@ -25,6 +26,6 @@ export default function Home() {
         <Offer />
       </main>
       <Footer />
-    </>
+    </ContactFormProvider>
   );
 }

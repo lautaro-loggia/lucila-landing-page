@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "motion/react";
 import { useState } from "react";
-import { site } from "@/lib/site";
+import { ContactButton } from "./contact-form";
 import { Arrow, ease } from "./ui";
 
 const links = [
@@ -49,14 +49,9 @@ export function Nav() {
           ))}
         </ul>
         <div className="flex items-center gap-2">
-          <a
-            href={site.links.start}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group hidden items-center gap-2 rounded-full bg-clay px-5 py-3 text-[15px] font-medium text-sand sm:inline-flex"
-          >
+          <ContactButton className="group hidden items-center gap-2 rounded-full bg-clay px-5 py-3 text-[15px] font-medium text-sand sm:inline-flex">
             Empezá hoy <Arrow />
-          </a>
+          </ContactButton>
           <button
             type="button"
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
@@ -90,14 +85,12 @@ export function Nav() {
                 </li>
               ))}
             </ul>
-            <a
-              href={site.links.start}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 flex items-center justify-between rounded-full bg-clay px-6 py-4 text-sand"
+            <ContactButton
+              onClick={() => setOpen(false)}
+              className="mt-5 flex w-full items-center justify-between rounded-full bg-clay px-6 py-4 text-sand"
             >
               Empezá hoy <span aria-hidden>→</span>
-            </a>
+            </ContactButton>
           </motion.div>
         ) : null}
       </AnimatePresence>

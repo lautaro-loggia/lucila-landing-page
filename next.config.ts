@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   images: {
     formats: ["image/avif", "image/webp"],
-    qualities: [70, 80],
+    qualities: [78, 85],
     minimumCacheTTL: 60 * 60 * 24 * 30,
   },
   turbopack: {

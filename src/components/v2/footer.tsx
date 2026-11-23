@@ -4,7 +4,8 @@ import { InstagramLogo, TiktokLogo } from "@phosphor-icons/react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import { site } from "@/lib/site";
-import { Arrow, Button, Reveal } from "./ui";
+import { ContactButton } from "./contact-form";
+import { Arrow, Reveal, buttonClass } from "./ui";
 
 const nav = [
   { href: "#inicio", label: "Inicio" },
@@ -27,7 +28,7 @@ export function Footer() {
 
   return (
     <footer className="overflow-hidden px-5 pt-16">
-      <Reveal className="mx-auto max-w-2xl text-center">
+      <Reveal blur className="mx-auto max-w-2xl text-center">
         <h2 className="display text-[clamp(2.6rem,5vw,4rem)]">
           Entrená fuerte. <span className="ital">Entrená bien.</span>
         </h2>
@@ -35,9 +36,9 @@ export function Footer() {
           Programas de CrossFit, musculación y home training a distancia. Personalizados presenciales
           en Tigre.
         </p>
-        <Button href={site.links.start} className="mt-8">
+        <ContactButton className={buttonClass("dark", "mt-8")}>
           Escribime por WhatsApp <Arrow />
-        </Button>
+        </ContactButton>
       </Reveal>
 
       <ul className="mx-auto mt-14 flex max-w-3xl flex-wrap justify-center gap-x-8 gap-y-3 text-sm text-cocoa">

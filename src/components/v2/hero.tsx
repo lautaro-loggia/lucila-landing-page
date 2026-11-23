@@ -3,8 +3,8 @@
 import Image from "next/image";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
-import { site } from "@/lib/site";
-import { Arrow, Button } from "./ui";
+import { ContactButton } from "./contact-form";
+import { Arrow, Button, buttonClass } from "./ui";
 
 const tags = ["CrossFit", "Musculación", "Home training", "Presencial"];
 
@@ -29,7 +29,7 @@ export function Hero() {
             alt="Retrato de Lucila Carro en plena competencia"
             fill
             priority
-            quality={80}
+            quality={85}
             sizes="(min-width: 768px) 58vw, 100vw"
             className="object-cover object-[45%_12%] md:object-[40%_22%]"
           />
@@ -67,9 +67,9 @@ export function Hero() {
             Uruguay. Para tu box, tu gimnasio o tu casa, estés donde estés.
           </p>
           <div className="rise mt-7 flex flex-wrap gap-3 md:mt-9" style={{ animationDelay: "0.58s" }}>
-            <Button href={site.links.start}>
+            <ContactButton className={buttonClass()}>
               Empezá hoy <Arrow />
-            </Button>
+            </ContactButton>
             <Button href="#programas" variant="soft">
               Ver programas
             </Button>

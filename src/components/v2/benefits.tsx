@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { site } from "@/lib/site";
+import { ContactButton, type ProgramChoice } from "./contact-form";
 import { Reveal, SectionHead, ease } from "./ui";
 
 const benefits = [
@@ -54,7 +54,7 @@ function BenefitsVideo() {
       muted
       loop
       playsInline
-      preload="metadata"
+      preload="none"
       controls={!!reduce}
       aria-label="Video de Lucila festejando su victoria en SouthFit 2026"
     />
@@ -161,7 +161,7 @@ const programs = [
     tags: ["Nivel 1", "Nivel 2", "Nivel 3"],
     src: "/images/crossfit.jpg",
     pos: "object-[50%_35%] max-md:object-[50%_30%]",
-    href: site.links.start,
+    choice: "CrossFit" as ProgramChoice,
   },
   {
     name: "Musculación",
@@ -170,7 +170,7 @@ const programs = [
     tags: ["Fuerza", "Hipertrofia", "Técnica"],
     src: "/images/musculacion.jpg",
     pos: "object-[50%_30%] max-md:object-[50%_38%]",
-    href: site.links.start,
+    choice: "Musculación" as ProgramChoice,
   },
   {
     name: "Home training",
@@ -179,7 +179,7 @@ const programs = [
     tags: ["Poco material", "Full body", "Movilidad"],
     src: "/images/home.jpg",
     pos: "object-[50%_30%] max-md:object-[50%_58%]",
-    href: site.links.start,
+    choice: "Home training" as ProgramChoice,
   },
   {
     name: "Presencial",
@@ -188,7 +188,7 @@ const programs = [
     tags: ["1 a 1", "Técnica", "Tigre"],
     src: "/images/coaching.jpg",
     pos: "object-[30%_30%] max-md:object-[30%_45%]",
-    href: site.links.tigre,
+    choice: "Presencial en Tigre" as ProgramChoice,
   },
 ];
 
@@ -230,7 +230,7 @@ export function Programs() {
                 src={p.src}
                 alt=""
                 fill
-                quality={80}
+                quality={85}
                 sizes="(min-width: 768px) 50vw, 100vw"
                 className={`-z-10 object-cover transition-transform duration-1000 ${p.pos} ${on ? "scale-100" : "scale-110"}`}
               />
@@ -281,14 +281,12 @@ export function Programs() {
                               {t}
                             </span>
                           ))}
-                          <a
-                            href={p.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <ContactButton
+                            program={p.choice}
                             className="ml-1 text-xs text-white underline-offset-4 hover:underline"
                           >
                             Quiero este →
-                          </a>
+                          </ContactButton>
                         </div>
                       </div>
                     </motion.div>
