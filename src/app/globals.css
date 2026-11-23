@@ -1,26 +1,154 @@
 @import "tailwindcss";
 
+/*
+  Layout de referencia (plantilla Solenne) con la paleta Wonder Program:
+  índigo profundo + violeta + lila, tema oscuro fijo (identidad de la marca).
+  Los nombres de tokens se mantienen; cambian los valores.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --sand: #110c26; /* fondo (índigo profundo) */
+  --shell: #1b1540; /* tarjetas */
+  --blush: #282060; /* chips */
+  --rose: #3a2f7a;
+  --clay: #9d63f7; /* acento violeta */
+  --taupe: #8f88b3; /* texto apagado */
+  --cocoa: #aaa3cb; /* texto secundario */
+  --ink: #efebfb; /* texto (niebla) */
+  --sage: #3a2f7a;
+  --cream: #c4a8ff; /* lila */
+  color-scheme: dark;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-sand: var(--sand);
+  --color-shell: var(--shell);
+  --color-blush: var(--blush);
+  --color-rose: var(--rose);
+  --color-clay: var(--clay);
+  --color-taupe: var(--taupe);
+  --color-cocoa: var(--cocoa);
+  --color-ink: var(--ink);
+  --color-sage: var(--sage);
+  --color-cream: var(--cream);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-serif: var(--font-serif);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 6rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--sand);
+  color: var(--ink);
+}
+
+::selection {
+  background: var(--ink);
+  color: var(--sand);
+}
+
+:focus-visible {
+  outline: 2px solid var(--clay);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Títulos: grotesca apretada como Inter Display */
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+/* Palabra de acento en serif itálica */
+.ital {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: var(--blush);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  color: var(--ink);
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+.marquee-track {
+  animation: marquee 22s linear infinite;
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin-slow-rev {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+.orbit {
+  animation: spin-slow 40s linear infinite;
+}
+.orbit-counter {
+  animation: spin-slow-rev 40s linear infinite;
+}
+
+/* Entrada del hero en CSS puro: visible antes de hidratar */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    filter: blur(0);
+  }
+}
+@keyframes hero-img {
+  from {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.rise {
+  animation: rise 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-img {
+  animation: hero-img 1.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .marquee-track,
+  .orbit,
+  .orbit-counter,
+  .rise,
+  .hero-img {
+    animation: none;
+  }
 }

@@ -1,36 +1,23 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Lucila Carro · Wonder Program
 
-## Getting Started
+Landing page en Next.js 16 + Tailwind v4 + Motion.
 
-First, run the development server:
+## Correr en local
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Publicar
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+`npm run build` genera una página 100% estática. Se puede subir a Vercel tal cual.
+Definí `NEXT_PUBLIC_SITE_URL` con el dominio final (por ejemplo `https://wonderprogram.com`) para que las imágenes de redes y la URL canónica queden bien.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Dónde editar
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- WhatsApp, redes y mensajes precargados: `src/lib/site.ts`
+- Textos de cada sección: `src/components/*.tsx`
+- Fotos optimizadas: `public/images/` (máx. 2000 px; Next las sirve en AVIF/WebP)
+- Video de SouthFit: `public/video/southfit.mp4`
+- Colores de marca: variables al inicio de `src/app/globals.css`
