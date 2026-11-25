@@ -8,8 +8,8 @@ import { Arrow, ease } from "./ui";
 const links = [
   { href: "#inicio", label: "Inicio" },
   { href: "#programas", label: "Programas" },
+  { href: "#alumnos", label: "Alumnos" },
   { href: "#sobre-mi", label: "Sobre mí" },
-  { href: "#testimonios", label: "Testimonios" },
   { href: "#talleres", label: "Talleres" },
 ];
 

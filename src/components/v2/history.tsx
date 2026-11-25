@@ -13,50 +13,34 @@ const chapters = [
   {
     tag: "El comienzo",
     title: "Todo empezó en Uruguay",
-    body: "Soy uruguaya, atleta de CrossFit y entrenadora. Hace nueve años que hago CrossFit.",
+    body: "Soy uruguaya, atleta de CrossFit y entrenadora. Hace tres años vivo en Argentina.",
     src: "/images/sobre-mi.jpg",
     alt: "Lucila apoyada sobre una barra con discos",
     pos: "object-[50%_25%]",
   },
   {
     tag: "La élite",
-    title: "Cuatro años seguidos en Copa Sur",
-    body: "Hace cinco años que compito en élite. Clasifiqué cuatro años consecutivos a Copa Sur, la semifinal de los CrossFit Games: uno en equipo y tres como atleta individual.",
+    title: "Más de 9 años en alto rendimiento",
+    body: "Cuatro años seguidos clasificando a la semifinal de los CrossFit Games (Copa Sur).",
     src: "/images/salto.jpg",
     alt: "Lucila festejando con los brazos arriba en una competencia",
     pos: "object-[50%_30%]",
   },
   {
-    tag: "Por el mundo",
-    title: "Podios en siete países",
-    body: "Gané y subí al podio en Chile, Brasil, Sudáfrica, Ecuador, Colombia, Uruguay y Argentina. También competí en Estados Unidos.",
-    src: "/images/strong.jpg",
-    alt: "Lucila sonriendo en la arena de una competencia",
-    pos: "object-top",
+    tag: "Los títulos",
+    title: "Campeona nacional y SouthFit",
+    body: "Hace más de cuatro años que soy campeona nacional de Uruguay, y en 2026 gané SouthFit.",
+    src: "/video/southfit-poster.jpg",
+    alt: "Lucila festejando su victoria en SouthFit 2026",
+    pos: "object-[50%_30%]",
   },
   {
     tag: "Formación",
     title: "De atleta a entrenadora",
-    body: "Me recibí de Técnica en Fitness en el IUACJ, con orientación en entrenamiento personalizado, y soy CrossFit Level 1 Trainer.",
+    body: "Técnica en Fitness (IUACJ) y CrossFit Level 1 Trainer. Entreno gente en Tigre y llevo mis talleres a boxes de Argentina y Uruguay.",
     src: "/images/coaching.jpg",
     alt: "Lucila entrenando",
     pos: "object-[30%_30%]",
-  },
-  {
-    tag: "Argentina",
-    title: "Una nueva casa",
-    body: "Hace tres años vivo en Argentina. Doy entrenamientos personalizados en Tigre y recorro boxes de Argentina y Uruguay con mis talleres.",
-    src: "/images/taller-1.jpg",
-    alt: "Grupo de alumnos con sus certificados al cierre de un taller",
-    pos: "object-center",
-  },
-  {
-    tag: "2025 · 2026",
-    title: "Campeona nacional y SouthFit",
-    body: "En 2025 fui campeona nacional de Uruguay en la temporada de los CrossFit Games, y en 2026 gané SouthFit.",
-    src: "/video/southfit-poster.jpg",
-    alt: "Lucila festejando su victoria en SouthFit 2026",
-    pos: "object-[50%_30%]",
   },
   {
     tag: "Hoy",
@@ -165,7 +149,7 @@ export function History() {
             Hola, soy <span className="ital">Lucila.</span>
           </>
         }
-        aside="Del primer WOD en Uruguay a competir por el mundo y entrenar gente en Argentina. Esta es mi historia."
+        aside="La persona detrás de Wonder Program, en pocas palabras."
       />
 
       <div className="mt-14 grid gap-12 md:grid-cols-[0.9fr_1fr] md:gap-16">

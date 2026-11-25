@@ -5,32 +5,7 @@ import { motion, useReducedMotion, useScroll, useSpring, useTransform, type Moti
 import { useRef, useState, useSyncExternalStore } from "react";
 import { Reveal } from "./ui";
 
-const avatars = ["/images/podio.jpg", "/images/medalla.jpg", "/images/strong.jpg"];
-
-/** Franja de prueba social bajo el hero. */
-export function Rating() {
-  return (
-    <section aria-label="Reconocimiento" className="px-5 pt-16 pb-16 text-center">
-      <Reveal>
-        <div className="flex justify-center -space-x-3">
-          {avatars.map((src) => (
-            <span key={src} className="relative size-12 overflow-hidden rounded-full ring-4 ring-sand">
-              <Image src={src} alt="" fill sizes="48px" quality={78} className="object-cover object-top" />
-            </span>
-          ))}
-        </div>
-        <p aria-hidden className="mt-4 text-[13px] tracking-[0.3em] text-clay">★★★★★</p>
-        <p className="mt-2 text-lg font-medium tracking-tight">Campeona nacional de Uruguay 2025</p>
-        <p className="mt-2 text-sm text-taupe">
-          Cuatro años seguidos en Copa Sur y competencias en ocho países.
-        </p>
-      </Reveal>
-    </section>
-  );
-}
-
-// Provisoria: Lucila va a pasar una frase suya para reemplazarla.
-const quote = "Entrenar no es hacer más. | Es hacerlo *bien.*"; // "|" = salto de línea
+const quote = "Tu mejor versión no se encuentra. | Se *construye.*"; // "|" = salto de línea
 
 function Word({
   word,
@@ -69,7 +44,7 @@ export function Philosophy() {
   };
 
   return (
-    <section aria-label="Filosofía" className="px-5 py-24 text-center sm:py-36">
+    <section aria-label="Filosofía" className="px-5 py-24 text-center sm:py-32">
       <Reveal>
         <span className="chip">Filosofía</span>
       </Reveal>
@@ -90,13 +65,12 @@ export function Philosophy() {
   );
 }
 
-// Fotos que no aparecen en "Mi historia", para no repetir.
+// Logros de Lucila. No agregar resultados ni fechas sin confirmar.
 const polaroids = [
-  { src: "/images/podio.jpg", title: "Con la celeste", note: "bandera en alto", rot: -6, y: 10, pos: "object-[50%_30%]" },
-  { src: "/images/medalla.jpg", title: "Disco en alto", note: "con la medalla puesta", rot: 3, y: -8, pos: "object-top" },
-  { src: "/images/foco.jpg", title: "Foco", note: "concentrada", rot: -2, y: 14, pos: "object-center" },
-  { src: "/images/crossfit.jpg", title: "Salto con soga", note: "en competencia", rot: 5, y: -4, pos: "object-[50%_40%]" },
-  { src: "/images/bici.jpg", title: "Assault bike", note: "a fondo", rot: -4, y: 8, pos: "object-[50%_35%]" },
+  { src: "/images/podio.jpg", alt: "Lucila en el podio con la bandera de Uruguay", title: "Colombia 2026", note: "segundo puesto, élite", rot: -5, y: 10, pos: "object-[50%_30%]", wide: false },
+  { src: "/images/medalla.jpg", alt: "Lucila con la medalla y el disco de SouthFit en alto", title: "Campeona de SouthFit 2026", note: "primer puesto", rot: 3, y: -8, pos: "object-top", wide: false },
+  { src: "/images/diploma.jpg", alt: "Diploma de campeona nacional de Uruguay de los CrossFit Games 2025", title: "Campeona nacional", note: "hace más de 4 años", rot: -2, y: 12, pos: "object-center", wide: true },
+  { src: "/images/strong.jpg", alt: "Lucila en la arena de los StrongFit Games", title: "StrongFit Games 2026", note: "Argentina", rot: 4, y: -4, pos: "object-top", wide: false },
 ];
 
 const desktopQuery = "(min-width: 768px)";
@@ -125,20 +99,22 @@ function Polaroid({ p, i, canDrag }: { p: (typeof polaroids)[number]; i: number;
       whileInView={{ opacity: 1, y: p.y * k, rotate: p.rot * k }}
       viewport={{ once: true, amount: canDrag ? 0.3 : 0.01 }}
       transition={{ type: "spring", stiffness: 140, damping: 18, delay: (i % 4) * 0.08 }}
-      className="relative w-[64vw] max-w-[260px] shrink-0 snap-center md:w-[210px] bg-[#efebfb] p-2.5 pb-3 md:cursor-grab md:touch-pan-y text-sand shadow-[0_24px_40px_-18px_rgba(5,3,20,0.35)] select-none"
+      className={`relative shrink-0 snap-center bg-[#efebfb] p-2.5 pb-3 md:cursor-grab md:touch-pan-y text-sand shadow-[0_24px_40px_-18px_rgba(5,3,20,0.35)] select-none ${
+        p.wide ? "w-[78vw] max-w-[340px] md:w-[330px]" : "w-[64vw] max-w-[260px] md:w-[235px]"
+      }`}
     >
       {/* cinta */}
       <span
         aria-hidden
         className="absolute -top-2.5 left-1/2 h-5 w-16 -translate-x-1/2 rotate-[-3deg] bg-rose/80 shadow-sm"
       />
-      <div className="relative aspect-[4/5] overflow-hidden bg-blush">
+      <div className={`relative overflow-hidden bg-blush ${p.wide ? "aspect-[1278/984]" : "aspect-[4/5]"}`}>
         <Image
           src={p.src}
-          alt=""
+          alt={p.alt}
           fill
           draggable={false}
-          sizes="210px"
+          sizes={p.wide ? "340px" : "260px"}
           quality={85}
           className={`pointer-events-none object-cover ${p.pos}`}
         />
@@ -161,15 +137,19 @@ export function Gallery() {
   const onScroll = () => {
     const el = strip.current;
     if (!el || desktop) return;
-    const first = el.firstElementChild as HTMLElement | null;
-    const step = first ? first.offsetWidth + 16 : el.clientWidth;
-    setCurrent(Math.min(polaroids.length - 1, Math.max(0, Math.round(el.scrollLeft / step))));
+    // Las fotos no miden todas lo mismo: gana la más cercana al centro
+    const center = el.scrollLeft + el.clientWidth / 2;
+    const dist = Array.from(el.children).map((c) => {
+      const item = c as HTMLElement;
+      return Math.abs(item.offsetLeft - el.offsetLeft + item.offsetWidth / 2 - center);
+    });
+    setCurrent(dist.indexOf(Math.min(...dist)));
   };
   const goTo = (n: number) => {
     const el = strip.current;
     const item = el?.children[n] as HTMLElement | undefined;
     if (!el || !item) return;
-    el.scrollTo({ left: item.offsetLeft - (el.clientWidth - item.offsetWidth) / 2, behavior: "smooth" });
+    el.scrollTo({ left: item.offsetLeft - el.offsetLeft - (el.clientWidth - item.offsetWidth) / 2, behavior: "smooth" });
   };
 
   return (

@@ -166,20 +166,19 @@ export function Approach() {
           </h3>
           <p className="font-serif text-[17px] leading-[1.5] text-cocoa">
             <span className="float-left mr-2 font-serif text-[4.2rem] leading-[0.8] text-clay">C</span>
-            ada planificación arranca por vos: tu experiencia, tus objetivos y dónde entrenás. Soy
-            Técnica en Fitness por el IUACJ y CrossFit Level 1 Trainer, y hace tres años vivo en
-            Argentina, donde doy entrenamientos personalizados en Tigre y recorro boxes con mis
-            talleres. Respondo personalmente cada mensaje.
+            ada planificación de Wonder Program arranca por vos: tu experiencia, tus objetivos y dónde
+            entrenás. Con eso armo un plan claro, semana a semana, para que sepas qué hacer cada día.
+            Respondo personalmente cada mensaje.
           </p>
         </Card>
 
         <Card delay={0.1} className="flex min-h-[260px] flex-col justify-between p-7 max-md:hidden">
-          <p className="text-xs text-taupe">Desde hace</p>
+          <p className="text-xs text-taupe">Más de</p>
           <p className="display text-[6.5rem] leading-none tracking-[-0.07em]">
             <Counter to={9} />
             <span className="ital text-5xl"> años</span>
           </p>
-          <p className="max-w-[26ch] text-sm text-cocoa">haciendo CrossFit, cinco de ellos compitiendo en élite.</p>
+          <p className="max-w-[26ch] text-sm text-cocoa">en alto rendimiento, puestos en cada plan de Wonder.</p>
         </Card>
 
         <PhotoCard src="/images/taller-2.jpg" label="Una comunidad real" icon="♡" delay={0.16} pos="object-center" className="max-md:hidden" />

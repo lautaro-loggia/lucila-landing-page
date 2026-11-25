@@ -17,31 +17,34 @@ export function Hero() {
   const fade = useTransform(scrollYProgress, [0.2, 0.75], [1, 0]);
 
   return (
-    <section id="inicio" ref={ref} className="relative isolate min-h-[100dvh] overflow-hidden">
-      {/* Foto a sangre que se funde con el fondo */}
-      <motion.div
-        style={reduce ? undefined : { y: imgY }}
-        className="absolute inset-y-0 right-0 -z-10 w-full max-md:bottom-auto max-md:h-[64%] md:-right-[9%] md:w-[60%] md:[mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.35)_22%,black_52%)]"
-      >
-        <div className="hero-img relative h-full w-full">
-          <Image
-            src="/images/retrato.jpg"
-            alt="Retrato de Lucila Carro en plena competencia"
-            fill
-            priority
-            quality={85}
-            sizes="(min-width: 768px) 58vw, 100vw"
-            className="object-cover object-[45%_12%] md:object-[40%_22%]"
-          />
-        </div>
-      </motion.div>
-      {/* Velos: tinte violeta + fundido a la izquierda y abajo */}
-      <div aria-hidden className="absolute inset-0 -z-10 bg-[#282060]/20 mix-blend-multiply" />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,var(--sand)_0%,rgba(17,12,38,0.8)_30%,rgba(17,12,38,0)_50%)] max-md:bg-[linear-gradient(0deg,var(--sand)_8%,rgba(17,12,38,0.85)_45%,rgba(17,12,38,0.1)_75%)]"
-      />
-      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-[38%] bg-gradient-to-t from-sand via-sand/70 to-transparent" />
+    <section id="inicio" ref={ref} className="relative isolate min-h-[100dvh] overflow-x-clip">
+      {/* El recorte va solo en el fondo: el texto baja con el parallax y no se corta contra la sección siguiente */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        {/* Foto a sangre que se funde con el fondo */}
+        <motion.div
+          style={reduce ? undefined : { y: imgY }}
+          className="absolute inset-y-0 right-0 -z-10 w-full max-md:bottom-auto max-md:h-[64%] max-md:[mask-image:linear-gradient(180deg,black_45%,rgba(0,0,0,0.55)_70%,rgba(0,0,0,0.15)_88%,transparent_100%)] md:-right-[9%] md:w-[60%] md:[mask-image:linear-gradient(90deg,transparent_0%,rgba(0,0,0,0.35)_22%,black_52%)]"
+        >
+          <div className="hero-img relative h-full w-full">
+            <Image
+              src="/images/retrato.jpg"
+              alt="Retrato de Lucila Carro en plena competencia"
+              fill
+              priority
+              quality={85}
+              sizes="(min-width: 768px) 58vw, 100vw"
+              className="object-cover object-[45%_12%] md:object-[40%_22%]"
+            />
+          </div>
+        </motion.div>
+        {/* Velos: tinte violeta + fundido a la izquierda y abajo */}
+        <div aria-hidden className="absolute inset-0 -z-10 bg-[#282060]/20 mix-blend-multiply" />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,var(--sand)_0%,rgba(17,12,38,0.8)_30%,rgba(17,12,38,0)_50%)] max-md:bg-[linear-gradient(0deg,var(--sand)_8%,rgba(17,12,38,0.85)_45%,rgba(17,12,38,0.1)_75%)]"
+        />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 h-[38%] bg-gradient-to-t from-sand via-sand/70 to-transparent" />
+      </div>
 
       <motion.div
         style={reduce ? undefined : { y: textY, opacity: fade }}

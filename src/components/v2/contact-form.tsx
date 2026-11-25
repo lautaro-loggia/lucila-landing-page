@@ -16,6 +16,7 @@ import {
   CalendarCheck,
   ChatCircleDots,
   Check,
+  GlobeHemisphereWest,
   Heartbeat,
   House,
   type Icon,
@@ -36,11 +37,17 @@ import { setSmoothScroll } from "./smooth-scroll";
 /** Lo que se puede elegir de entrada desde un botón (la tarjeta de un programa, el ticket del taller). */
 export type ProgramChoice = "CrossFit" | "Musculación" | "Home training" | "Presencial en Tigre" | "Taller para mi box";
 
-const WORKSHOP: ProgramChoice = "Taller para mi box";
+/** Desde dónde se puede abrir el formulario: un programa puntual o solo "Online". */
+export type EntryChoice = ProgramChoice | "Online";
 
-type Option = { value: string; hint?: string; icon?: Icon };
+const WORKSHOP: ProgramChoice = "Taller para mi box";
+const IN_PERSON: ProgramChoice = "Presencial en Tigre";
+const ONLINE = "Online";
+
+type Option = { value: string; label?: string; hint?: string; icon?: Icon };
 
 type Answers = {
+  mode: string;
   program: string;
   goal: string;
   level: string;
@@ -51,9 +58,27 @@ type Answers = {
   notes: string;
 };
 
-const empty: Answers = { program: "", goal: "", level: "", group: "", name: "", place: "", box: "", notes: "" };
+const empty: Answers = { mode: "", program: "", goal: "", level: "", group: "", name: "", place: "", box: "", notes: "" };
 
-type Question = { key: "program" | "goal" | "level" | "group"; title: string; options: Option[]; columns?: 2 };
+type Question = {
+  key: "mode" | "program" | "goal" | "level" | "group";
+  title: string;
+  options: Option[];
+  note?: string;
+  columns?: 2;
+};
+
+/** Primera pregunta: a distancia o presencial (o un taller para el box). */
+const modeQ: Question = {
+  key: "mode",
+  title: "Empezá a construir tu mejor versión.",
+  note: "Todos los niveles. Diferentes objetivos. Un mismo compromiso.",
+  options: [
+    { value: ONLINE, label: "Entrená conmigo online", hint: "A distancia, estés donde estés", icon: GlobeHemisphereWest },
+    { value: IN_PERSON, label: "Entrená conmigo presencialmente", hint: "En Tigre, Buenos Aires", icon: MapPin },
+    { value: WORKSHOP, label: "Llevá un taller a tu box", hint: "Para tu comunidad", icon: UsersThree },
+  ],
+};
 
 const programQ: Question = {
   key: "program",
@@ -62,8 +87,6 @@ const programQ: Question = {
     { value: "CrossFit", hint: "Programación para tu box", icon: Lightning },
     { value: "Musculación", hint: "Para entrenar en el gimnasio", icon: Barbell },
     { value: "Home training", hint: "Desde tu casa, con lo que tengas", icon: House },
-    { value: "Presencial en Tigre", hint: "Personalizado, cara a cara", icon: MapPin },
-    { value: WORKSHOP, hint: "Un taller para tu comunidad", icon: UsersThree },
     { value: "No sé todavía", hint: "Lo charlamos y te recomiendo uno", icon: ChatCircleDots },
   ],
 };
@@ -103,10 +126,15 @@ const groupQ: Question = {
   ],
 };
 
-/** Las preguntas cambian según lo que eligió: entrenar o pedir un taller. */
-function questionsFor(program: string, preset: boolean): Question[] {
+/** Qué vino ya respondido según el botón con el que se abrió. */
+type Preset = "none" | "mode" | "program";
+
+/** Las preguntas cambian según lo que eligió: online, presencial o un taller. */
+function questionsFor(program: string, preset: Preset): Question[] {
   const rest = program === WORKSHOP ? [groupQ] : [goalQ, levelQ];
-  return preset ? rest : [programQ, ...rest];
+  // Presencial y taller no preguntan el programa: ya quedó definido
+  const ask = preset !== "program" && program !== WORKSHOP && program !== IN_PERSON;
+  return [...(preset === "none" ? [modeQ] : []), ...(ask ? [programQ] : []), ...rest];
 }
 
 /** Arma el mensaje de WhatsApp solo con lo que la persona completó. */
@@ -127,15 +155,16 @@ export function buildMessage(a: Answers) {
     return lines.length ? `${intro}\n\n${lines.join("\n")}` : intro;
   }
 
+  const online = a.mode === ONLINE ? "a distancia " : "";
   const what =
-    a.program === "Presencial en Tigre"
+    a.program === IN_PERSON
       ? "quiero entrenar presencial con vos en Tigre."
       : a.program === "No sé todavía"
-        ? "quiero entrenar con Wonder Program y me gustaría que me recomiendes un programa."
-        : "quiero entrenar con Wonder Program.";
+        ? `quiero entrenar ${online}con Wonder Program y me gustaría que me recomiendes un programa.`
+        : `quiero entrenar ${online}con Wonder Program.`;
   const intro = `¡Hola Lucila! ${name ? `Soy ${name} y ${what}` : what.charAt(0).toUpperCase() + what.slice(1)}`;
   const lines = [
-    a.program && a.program !== "No sé todavía" && `• Programa: ${a.program}`,
+    a.program && a.program !== "No sé todavía" && a.program !== IN_PERSON && `• Programa: ${a.program}`,
     a.goal && `• Objetivo: ${a.goal}`,
     a.level && `• Experiencia: ${a.level}`,
     place && `• Desde: ${place}`,
@@ -144,7 +173,7 @@ export function buildMessage(a: Answers) {
   return lines.length ? `${intro}\n\n${lines.join("\n")}` : intro;
 }
 
-const ContactFormContext = createContext<(program?: ProgramChoice) => void>(() => {});
+const ContactFormContext = createContext<(entry?: EntryChoice) => void>(() => {});
 
 /** Abre el formulario, opcionalmente con un programa ya elegido. */
 export function useContactForm() {
@@ -182,7 +211,7 @@ function OptionCard({
         </span>
       )}
       <span className="min-w-0 flex-1">
-        <span className="block font-medium leading-snug text-ink">{option.value}</span>
+        <span className="block font-medium leading-snug text-ink">{option.label ?? option.value}</span>
         {option.hint && <span className="mt-0.5 block text-sm leading-snug text-cocoa">{option.hint}</span>}
       </span>
       {!compact && (
@@ -216,18 +245,18 @@ export function ContactFormProvider({ children }: { children: ReactNode }) {
   const [answers, setAnswers] = useState<Answers>(empty);
   const [step, setStep] = useState(0);
   const [dir, setDir] = useState(1);
-  // Si se entró desde un programa o desde el taller, esa pregunta ya está respondida
-  const [preset, setPreset] = useState(false);
+  // Si se entró desde un programa, el taller o "online", esa pregunta ya está respondida
+  const [preset, setPreset] = useState<Preset>("none");
 
   const steps = questionsFor(answers.program, preset);
   const TOTAL = steps.length + 1;
   const workshop = answers.program === WORKSHOP;
 
-  const open = useCallback((program?: ProgramChoice) => {
-    setPreset(Boolean(program));
+  const open = useCallback((entry?: EntryChoice) => {
+    setPreset(!entry ? "none" : entry === ONLINE ? "mode" : "program");
     setStep(0);
     setDir(1);
-    setAnswers(program ? { ...empty, program } : empty);
+    setAnswers(!entry ? empty : entry === ONLINE ? { ...empty, mode: ONLINE } : { ...empty, program: entry });
     dialog.current?.showModal();
     // Mientras está abierto, la página de atrás no scrollea
     document.documentElement.style.overflow = "hidden";
@@ -266,7 +295,9 @@ export function ContactFormProvider({ children }: { children: ReactNode }) {
 
   const choose = (key: Question["key"], value: string) => {
     const next = { ...answers, [key]: value };
-    // Si cambió de "entrenar" a "taller" (o al revés), las preguntas siguientes cambian
+    // La modalidad define el programa si es presencial o taller; si no, se pregunta
+    if (key === "mode" && value !== answers.mode) next.program = value === ONLINE ? "" : value;
+    // Si cambió de modalidad, las preguntas siguientes cambian
     const total = questionsFor(next.program, preset).length + 1;
     setAnswers(next);
     setTimeout(() => go(step + 1, total), reduce ? 0 : 260);
@@ -335,7 +366,7 @@ export function ContactFormProvider({ children }: { children: ReactNode }) {
           <div className="flex-1 overflow-x-hidden overflow-y-auto px-5 pt-5 pb-6 md:px-7 md:pb-7">
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
-                key={`${step}-${workshop}`}
+                key={question?.key ?? "final"}
                 initial={reduce ? false : { opacity: 0, x: dir * 28 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={reduce ? undefined : { opacity: 0, x: dir * -28 }}
@@ -361,6 +392,7 @@ export function ContactFormProvider({ children }: { children: ReactNode }) {
                         />
                       ))}
                     </div>
+                    {question.note ? <p className="mt-5 text-center text-sm text-balance text-cocoa">{question.note}</p> : null}
                     <button
                       type="button"
                       onClick={() => go(step + 1)}
@@ -376,10 +408,12 @@ export function ContactFormProvider({ children }: { children: ReactNode }) {
                     </h2>
 
                     {/* Lo elegido, a mano para revisar: tocar uno vuelve a esa pregunta */}
-                    {(preset || picked.length > 0) && (
+                    {(preset !== "none" || picked.length > 0) && (
                       <div className="mt-4 flex flex-wrap gap-1.5">
-                        {preset && answers.program ? (
-                          <span className="rounded-lg bg-clay/15 px-2.5 py-1 text-xs text-cream">{answers.program}</span>
+                        {preset !== "none" ? (
+                          <span className="rounded-lg bg-clay/15 px-2.5 py-1 text-xs text-cream">
+                            {preset === "mode" ? answers.mode : answers.program}
+                          </span>
                         ) : null}
                         {picked.map((q) => (
                           <button
@@ -483,7 +517,7 @@ export function ContactButton({
   onClick,
   children,
 }: {
-  program?: ProgramChoice;
+  program?: EntryChoice;
   className?: string;
   onClick?: () => void;
   children: ReactNode;

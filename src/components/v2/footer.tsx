@@ -10,6 +10,7 @@ import { Arrow, Reveal, buttonClass } from "./ui";
 const nav = [
   { href: "#inicio", label: "Inicio" },
   { href: "#programas", label: "Programas" },
+  { href: "#alumnos", label: "Alumnos" },
   { href: "#sobre-mi", label: "Sobre mí" },
   { href: "#talleres", label: "Talleres" },
 ];
